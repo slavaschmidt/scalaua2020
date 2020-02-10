@@ -2,16 +2,17 @@ package com.slasch
 
 import org.apache.spark.sql.{functions => F, _}
 
-object StackOverflow extends App {
+object Ingestion extends App {
 
   def explodeAndCount(df: DataFrame)(col: String) = {
     count(explode(df)(col))(col)
   }
 
   def explode(df: DataFrame)(col: String) = {
-    df.withColumn(col, F.split(F.col(col), ";\\s?"))
+    df.withColumn(col, F.split(F.col(col), "\\s*;\\s*"))
       .withColumn(col, F.explode(F.col(col)))
       .filter(_.getAs[String](col) != "NA")
+      .filter(_.getAs[String](col) != "Other(s):")
   }
 
   def count(df: DataFrame)(col: String) = {
@@ -25,10 +26,10 @@ object StackOverflow extends App {
       df.withColumn(col, F.concat(F.col(col), F.lit(";"), F.col(c)))
     }
     val splitted = joined
-      .withColumn(col, F.regexp_replace(F.col(col), ";NA", ""))
-      .withColumn(col, F.regexp_replace(F.col(col), "NA;", ""))
+      .withColumn(col, F.split(F.col(col), "\\s*;\\s*"))
+      .withColumn(col, F.expr(s"""filter($col, x -> x != "N/A" && x != "Other(s):")"""))
       .filter(_.getAs[String](col).nonEmpty)
-      .withColumn(col, F.split(F.col(col), ";\\s?"))
+
 
       splitted.flatMap { row =>
         val year = row.getAs[String]("year")
@@ -43,7 +44,11 @@ object StackOverflow extends App {
   }
 
   def run(): Unit = {
-    val spark = Neo4jConnection.spark
+    val spark = SparkSession.builder()
+     .appName("CSV to Dataset")
+     .config("spark.driver.host", "localhost")
+     .master("local")
+     .getOrCreate
 
     val csvReader = spark.read.format("csv").option("header", "true")
 
@@ -55,7 +60,7 @@ object StackOverflow extends App {
       .withColumnRenamed("PlatformWorkedWith", "platform")
       .withColumnRenamed("DevEnviron", "ide")
       .withColumnRenamed("OpSys", "os")
-      .withColumn("framework", F.concat_ws("; s",F.col("WebFrameWorkedWith"), F.col("MiscTechWorkedWith")))
+      .withColumn("framework", F.concat_ws(";",F.col("WebFrameWorkedWith"), F.col("MiscTechWorkedWith")))
       .drop("WebFrameWorkedWith")
       .drop("MiscTechWorkedWith")
       .withColumn("year", F.lit("2019"))
@@ -74,6 +79,8 @@ object StackOverflow extends App {
       .cache()
 
     val in2017 =  csvReader
+      .option("quote", "\"") // ,"With a hard ""g,"" like ""gift"""
+      .option("escape", "\"")
       .load(s"src/main/resources/2017.csv")
       .select("HaveWorkedLanguage","HaveWorkedDatabase","HaveWorkedPlatform","HaveWorkedFramework","IDE")
       .withColumnRenamed("HaveWorkedLanguage", "language")
@@ -91,15 +98,18 @@ object StackOverflow extends App {
 
     val counts = fields.map(explodeAndCount(in))
 
-    val result: DataFrame = counts.reduce(_ union _)
+    val result = counts.reduce(_ union _)
+      .groupBy("language", "type").pivot("year").max("count")
+      .sort("type", "language")
+      .withColumnRenamed("language", "id")
 
     // result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("counts.csv") // format("json")
 
-    result.show(100, false)
+    result.show(1000, false)
 
-    val combs = combinations(spark, in.withColumn("combinations", F.lit("")))(fields)
+    // val combs = combinations(spark, in.withColumn("combinations", F.lit("")))(fields)
 
-    combs.show(100, false)
+    // combs.show(100, false)
   }
 
   run()
