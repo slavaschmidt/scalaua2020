@@ -34,3 +34,5 @@ activator-sbt-*.sbt
 
 .metals
 .bloop
+
+*.csv

@@ -1,25 +1,49 @@
-
-import org.apache.spark.sql.Dataset
+package com.slasch
 
 import org.apache.spark.sql.{functions => F, _}
 
 object StackOverflow extends App {
 
   def explodeAndCount(df: DataFrame)(col: String) = {
+    count(explode(df)(col))(col)
+  }
+
+  def explode(df: DataFrame)(col: String) = {
     df.withColumn(col, F.split(F.col(col), ";\\s?"))
       .withColumn(col, F.explode(F.col(col)))
-      .withColumn("type", F.lit(col))
       .filter(_.getAs[String](col) != "NA")
-      .groupBy(col, "type", "year")
-      .count()
+  }
+
+  def count(df: DataFrame)(col: String) = {
+    df.withColumn("type", F.lit(col)).groupBy(col, "type", "year").count()
+  }
+
+  def combinations(spark: SparkSession, df: DataFrame)(cols: Seq[String]) = {
+    import spark.implicits._
+    val col = "combinations"
+    val joined = cols.foldLeft(df) { (df, c) =>
+      df.withColumn(col, F.concat(F.col(col), F.lit(";"), F.col(c)))
+    }
+    val splitted = joined
+      .withColumn(col, F.regexp_replace(F.col(col), ";NA", ""))
+      .withColumn(col, F.regexp_replace(F.col(col), "NA;", ""))
+      .filter(_.getAs[String](col).nonEmpty)
+      .withColumn(col, F.split(F.col(col), ";\\s?"))
+
+      splitted.flatMap { row =>
+        val year = row.getAs[String]("year")
+        row.getSeq[String](7)
+          .combinations(2)
+          .toSeq
+          .map { arr => arr.head -> arr.last }
+          .groupBy(identity)
+          .map { case (key, value) => (key, year, value.size) }
+
+      }.groupBy("_1", "_2").sum("_3")
   }
 
   def run(): Unit = {
-    val spark = SparkSession.builder()
-     .appName("CSV to Dataset")
-     .config("spark.driver.host", "localhost")
-     .master("local")
-     .getOrCreate
+    val spark = Neo4jConnection.spark
 
     val csvReader = spark.read.format("csv").option("header", "true")
 
@@ -69,10 +93,13 @@ object StackOverflow extends App {
 
     val result: DataFrame = counts.reduce(_ union _)
 
-    result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("counts.csv") // format("json")
+    // result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("counts.csv") // format("json")
 
-    result.show(100)
+    result.show(100, false)
 
+    val combs = combinations(spark, in.withColumn("combinations", F.lit("")))(fields)
+
+    combs.show(100, false)
   }
 
   run()
