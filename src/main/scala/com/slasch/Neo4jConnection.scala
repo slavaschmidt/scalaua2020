@@ -1,23 +1,22 @@
 package com.slasch
 
-import java.io.File
-
-import scala.collection.JavaConverters._
-import org.neo4j.driver.v1.{AuthTokens, Config, GraphDatabase, Session, StatementResult}
+import org.neo4j.driver.v1.{AuthTokens, GraphDatabase, Session, StatementResult}
 
 object Neo4jConnection extends App {
 
   val path = "file:///src/main/resources/"
+  val constraintSql = "CREATE CONSTRAINT ON (t:Technology) ASSERT t.label IS UNIQUE" // also creates an index
+
   val scriptNodes =
     s"""
        |WITH "$path" AS base
        |WITH base + "vertices.csv" AS path
        |LOAD CSV WITH HEADERS FROM path AS row
-       |MERGE (tech:Technology {id:row.id})
+       |MERGE (tech:Technology {label:row.id})
        |SET
        |  tech.year2017 = toInteger(row['2017']), tech.year2018 = toInteger(row['2018']), tech.year2019 = toInteger(row['2019']),
        |  tech.total = tech.year2017 + tech.year2018 + tech.year2019,
-       |  tech.type = row.type
+       |  tech.kind = row.type
        |""".stripMargin
 
   val scriptEdges =
@@ -25,17 +24,21 @@ object Neo4jConnection extends App {
        |WITH "$path" AS base
        |WITH base + "edges.csv" AS path
        |LOAD CSV WITH HEADERS FROM path AS row
-       |MATCH (l:Technology {id: row.src})
-       |MATCH (r:Place {id: row.dst})
-       |MERGE (l)-[:EROAD {
+       |MATCH (l:Technology {label: row.src})
+       |MATCH (r:Technology {label: row.dst})
+       |MERGE (l)-[:CONNECTED {
        | distance: toFloat(row.distance),
        | year2017: toInteger(row['2017']),
        | year2018: toInteger(row['2018']),
        | year2019: toInteger(row['2019'])
-       |}]->(r)
+       | }]->(r)
        |""".stripMargin
 
   def ingest() = withDriver { session =>
+
+    val schema: StatementResult = session.run(constraintSql)
+    println(schema.summary())
+
     val ingestNodes: StatementResult = session.run(scriptNodes)
     println(ingestNodes.summary())
 
@@ -57,7 +60,7 @@ object Neo4jConnection extends App {
   }
 
 
-  // ingest()
+  ingest()
 
   def sp = {
     val statement =
