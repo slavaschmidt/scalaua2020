@@ -5,6 +5,7 @@ version := "0.0.1"
 organization := "com.slasch"
 
 scalaVersion := "2.12.10"
+// scalaVersion := "2.11.12"
 
 resolvers ++= Seq(
   "Sonatype" at "https://oss.sonatype.org/content/repositories/releases/",
@@ -14,8 +15,10 @@ resolvers ++= Seq(
 )
 
 scalacOptions ++= Seq(
-  "-Xmax-classfile-name", "128",
-  "-encoding", "UTF-8",
+  "-Xmax-classfile-name",
+  "128",
+  "-encoding",
+  "UTF-8",
   "-deprecation",
   "-feature",
   "-unchecked",
@@ -31,12 +34,10 @@ libraryDependencies ++= {
   val sparkVersion = "2.4.4"
 
   Seq(
-    "org.apache.spark"           %% "spark-core"           % sparkVersion,
-    // "org.apache.spark"           %% "spark-streaming"      % sparkVersion % Provided,
-    "org.apache.spark"           %% "spark-sql"            % sparkVersion,
-    // "com.typesafe.akka"          %% "akka-actor"           % akkaVersion,
-    // "com.typesafe.akka"          %% "akka-stream"          % akkaVersion,
-    // "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.2"
-  "neo4j-contrib" % "neo4j-spark-connector" % "2.1.0-M4"
+    "org.apache.spark" %% "spark-core"           % sparkVersion,
+    "org.apache.spark" %% "spark-graphx"         % sparkVersion,
+    "org.apache.spark" %% "spark-sql"            % sparkVersion,
+    "neo4j-contrib"    % "neo4j-spark-connector" % "2.1.0-M4",
+    "graphframes"      % "graphframes"           % "0.7.0-spark2.4-s_2.11"
   )
 }

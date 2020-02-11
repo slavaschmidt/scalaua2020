@@ -33,13 +33,16 @@ object Ingestion extends App {
       .withColumn(col, F.expr(s"""filter($col, x -> x != "NA")"""))
       .withColumn(col, F.expr(s"""filter($col, x -> x != "")"""))
 
-
-      val groupped = splitted.flatMap { row =>
+    val groupped = splitted
+      .flatMap { row =>
         val year = row.getAs[String]("year")
-        row.getSeq[String](7)
+        row
+          .getSeq[String](7)
           .combinations(2)
           .toSeq
-          .map { arr => arr.head -> arr.last }
+          .map { arr =>
+            arr.head -> arr.last
+          }
           .groupBy(identity)
           .map { case (key, value) => (key, year, value.size) }
 
@@ -49,23 +52,28 @@ object Ingestion extends App {
       .withColumn("src", $"pairs".getItem("_1"))
       .withColumn("dst", $"pairs".getItem("_2"))
 
-      val cleanSrc = cleanup(groupped, spark, "src")
-      val cleanDst = cleanup(cleanSrc, spark, "dst")
+    val cleanSrc = cleanup(groupped, spark, "src")
+    val cleanDst = cleanup(cleanSrc, spark, "dst")
 
-      cleanDst.groupBy("src", "dst", "year").sum("_3")
-        .withColumnRenamed("sum(_3)", "count")
-        .groupBy("src", "dst").pivot("year").sum("count")
-        .withColumn("2017", F.coalesce($"2017", F.lit(0)))
-        .withColumn("2018", F.coalesce($"2018", F.lit(0)))
-        .withColumn("2019", F.coalesce($"2019", F.lit(0)))
-        .withColumn("total", F.array("2017", "2018", "2019"))
-        .withColumn("total", F.expr("aggregate(total, 0L, (acc, value) -> acc + value)"))
-        .sort($"src", $"dst", $"total")
+    cleanDst
+      .groupBy("src", "dst", "year")
+      .sum("_3")
+      .withColumnRenamed("sum(_3)", "count")
+      .groupBy("src", "dst")
+      .pivot("year")
+      .sum("count")
+      .withColumn("2017", F.coalesce($"2017", F.lit(0)))
+      .withColumn("2018", F.coalesce($"2018", F.lit(0)))
+      .withColumn("2019", F.coalesce($"2019", F.lit(0)))
+      .withColumn("total", F.array("2017", "2018", "2019"))
+      .withColumn("distance", F.expr("aggregate(total, 0L, (acc, value) -> acc + value, acc -> 100000 / acc)"))
+      .sort($"src", $"dst", $"distance")
   }
 
   def cleanup(df: DataFrame, sparkSession: SparkSession, col: String) = {
 
-    df.withColumn(col,
+    df.withColumn(
+      col,
       F.when(F.col(col).equalTo("Bash/Shell"), "Bash/Shell/PowerShell")
         .when(F.col(col).equalTo("HTML"), "HTML/CSS")
         .when(F.col(col).equalTo("Google Cloud Platform"), "Google Cloud Platform/App Engine")
@@ -79,10 +87,11 @@ object Ingestion extends App {
     )
   }
   def run(): Unit = {
-    val spark = SparkSession.builder()
+    val spark = SparkSession
+      .builder()
       .appName("CSV to Dataset")
       .config("spark.driver.host", "localhost")
-      .master("local")
+      .master("local[*]")
       .getOrCreate
 
     val csvReader = spark.read.format("csv").option("header", "true")
@@ -133,22 +142,24 @@ object Ingestion extends App {
 
     val counts = fields.map(explodeAndCount(in))
 
-/*
-    val dirty = counts.reduce(_ union _)
-    val cleanNodes = clean(dirty, spark, "language")
-    val result = clean
-      .groupBy("language", "type").pivot("year").max("count")
+    val dirty      = counts.reduce(_ union _)
+    val cleanNodes = cleanup(dirty, spark, "language")
+    val result = cleanNodes
+      .groupBy("language", "type")
+      .pivot("year")
+      .max("count")
       .sort("type", "language")
       .withColumnRenamed("language", "id")
-*/
 
+    // result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("nodes.csv") // format("json")
 
-    // result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("counts.csv") // format("json")
-
-    //result.show(1000, false)
-    val combs = combinations(spark, in.withColumn("combinations", F.lit("")))(fields)
+    val combs = combinations(spark, in.withColumn("combinations", F.lit("")))(fields).coalesce(1)
 
     combs.show(100, false)
+    result.show(100, false)
+
+    // combs.write.format("csv").option("header", "true").mode("overwrite").csv("edges.csv") // format("json")
+
   }
 
   run()
