@@ -1,34 +1,72 @@
 package com.slasch
 
-import org.apache.spark.sql.SparkSession
-import org.neo4j.spark.{Neo4j, Neo4jConfig, Neo4jDataFrame}
+import java.io.File
+
+import scala.collection.JavaConverters._
+import org.neo4j.driver.v1.{AuthTokens, Config, GraphDatabase, Session, StatementResult}
 
 object Neo4jConnection extends App {
 
-  val spark = SparkSession
-    .builder()
-    .config(Neo4jConfig.prefix + "url", "bolt://localhost:7687")
-    .config(Neo4jConfig.prefix + "user", "neo4j")
-    .config(Neo4jConfig.prefix + "password", "pass")
-    .config("spark.driver.host", "localhost")
-    .appName("ScalaUA2020")
-    .master("local[*]")
-    .getOrCreate()
+  val path = "file:///src/main/resources/"
+  val scriptNodes =
+    s"""
+       |WITH "$path" AS base
+       |WITH base + "vertices.csv" AS path
+       |LOAD CSV WITH HEADERS FROM path AS row
+       |MERGE (tech:Technology {id:row.id})
+       |SET
+       |  tech.year2017 = toInteger(row['2017']), tech.year2018 = toInteger(row['2018']), tech.year2019 = toInteger(row['2019']),
+       |  tech.total = tech.year2017 + tech.year2018 + tech.year2019,
+       |  tech.type = row.type
+       |""".stripMargin
 
-  lazy val cypher = {
-    val queryParam = Map[String, Object](
-      "ass_id" -> "ass_id",
-      "chas" -> "chas",
-      "asse_id" -> "assem_id"
-    )
-    val query="MATCH (c:c {xyz:{xyz},chs:{chs}} ) MATCH (d:ass {ass_id:{ass_id}}) CREATE(c)-[w:ASS_IN]->(d) return w"
+  val scriptEdges =
+    s"""
+       |WITH "$path" AS base
+       |WITH base + "edges.csv" AS path
+       |LOAD CSV WITH HEADERS FROM path AS row
+       |MATCH (l:Technology {id: row.src})
+       |MATCH (r:Place {id: row.dst})
+       |MERGE (l)-[:EROAD {
+       | distance: toFloat(row.distance),
+       | year2017: toInteger(row['2017']),
+       | year2018: toInteger(row['2018']),
+       | year2019: toInteger(row['2019'])
+       |}]->(r)
+       |""".stripMargin
 
-    val sc = spark.sparkContext
-    Neo4j(sc).cypher(query,queryParam).loadDataFrame()
+  def ingest() = withDriver { session =>
+    val ingestNodes: StatementResult = session.run(scriptNodes)
+    println(ingestNodes.summary())
 
-    val sqlContext = spark.sqlContext
-    Neo4jDataFrame.apply(sqlContext,query,queryParam.toSeq)
+    val ingestEdges: StatementResult = session.run(scriptEdges)
+    println(ingestEdges.summary())
   }
 
+  def withDriver[T](block: Session => T) = {
+    val driver = GraphDatabase.driver("bolt://localhost/7687", AuthTokens.basic("neo4j", "scalaua"))
+    val session = driver.session()
+    try {
+      block(session)
+    } catch {
+      case ex: Exception => ex.printStackTrace()
+    } finally {
+      session.close()
+      driver.close()
+    }
+  }
+
+
+  // ingest()
+
+  def sp = {
+    val statement =
+      s"""
+         |MATCH (source:Technology {id: "Scala"}), (destination:Technology {id: "JavaScript"})
+         |CALL algo.shortestPath.stream(source, destination, null) YIELD nodeId, cost
+         |RETURN algo.getNodeById(nodeId).id AS place, cost
+         |""".stripMargin
+
+  }
 
 }

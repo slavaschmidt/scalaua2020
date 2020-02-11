@@ -38,6 +38,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-graphx"         % sparkVersion,
     "org.apache.spark" %% "spark-sql"            % sparkVersion,
     "neo4j-contrib"    % "neo4j-spark-connector" % "2.1.0-M4",
-    "graphframes"      % "graphframes"           % "0.7.0-spark2.4-s_2.11"
+    "graphframes"      % "graphframes"           % "0.7.0-spark2.4-s_2.11",
+    "org.neo4j.driver" % "neo4j-java-driver" % "1.7.5"
   )
 }
