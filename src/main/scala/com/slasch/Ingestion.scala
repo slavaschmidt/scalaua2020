@@ -65,9 +65,11 @@ object Ingestion extends App {
       .withColumn("2017", F.coalesce($"2017", F.lit(0)))
       .withColumn("2018", F.coalesce($"2018", F.lit(0)))
       .withColumn("2019", F.coalesce($"2019", F.lit(0)))
+/*
       .withColumn("total", F.array("2017", "2018", "2019"))
       .withColumn("distance", F.expr("aggregate(total, 0L, (acc, value) -> acc + value, acc -> 100000 / acc)"))
-      .sort($"src", $"dst", $"distance")
+*/
+      .sort($"src", $"dst")
   }
 
   def cleanup(df: DataFrame, sparkSession: SparkSession, col: String) = {
@@ -147,18 +149,21 @@ object Ingestion extends App {
     val result = cleanNodes
       .groupBy("language", "type")
       .pivot("year")
-      .max("count")
+      .sum("count")
       .sort("type", "language")
-      .withColumnRenamed("language", "id")
+      .withColumnRenamed("language", "name")
+      .withColumn("2017", F.coalesce(F.col("2017"), F.lit(0)))
+      .withColumn("2018", F.coalesce(F.col("2018"), F.lit(0)))
+      .withColumn("2019", F.coalesce(F.col("2019"), F.lit(0)))
 
-    // result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("nodes.csv") // format("json")
+    result.coalesce(1).write.format("csv").option("header", "true").mode("overwrite").csv("nodes.csv") // format("json")
 
     val combs = combinations(spark, in.withColumn("combinations", F.lit("")))(fields).coalesce(1)
 
     combs.show(100, false)
     result.show(100, false)
 
-    // combs.write.format("csv").option("header", "true").mode("overwrite").csv("edges.csv") // format("json")
+    combs.write.format("csv").option("header", "true").mode("overwrite").csv("edges.csv") // format("json")
 
   }
 

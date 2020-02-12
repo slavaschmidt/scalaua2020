@@ -1,0 +1,154 @@
+{
+  "data": {
+    "editors": [
+      {
+        "digital": "19:47",
+        "hours": 19,
+        "minutes": 47,
+        "name": "IntelliJ",
+        "percent": 81.5,
+        "text": "19 hrs 47 mins",
+        "total_seconds": 71226.682185
+      },
+      {
+        "digital": "3:28",
+        "hours": 3,
+        "minutes": 28,
+        "name": "VS Code",
+        "percent": 14.35,
+        "text": "3 hrs 28 mins",
+        "total_seconds": 12539.798824
+      },
+      {
+        "digital": "1:00",
+        "hours": 1,
+        "minutes": 0,
+        "name": "Sublime Text",
+        "percent": 4.15,
+        "text": "1 hr",
+        "total_seconds": 3629.9481
+      }
+    ],
+    "languages": [
+      {
+        "digital": "15:49",
+        "hours": 15,
+        "minutes": 49,
+        "name": "Scala",
+        "percent": 65.22,
+        "text": "15 hrs 49 mins",
+        "total_seconds": 56998.287464
+      },
+      {
+        "digital": "2:33",
+        "hours": 2,
+        "minutes": 33,
+        "name": "JSON",
+        "percent": 10.52,
+        "text": "2 hrs 33 mins",
+        "total_seconds": 9193.028669
+      },
+      {
+        "digital": "2:21",
+        "hours": 2,
+        "minutes": 21,
+        "name": "JavaScript",
+        "percent": 9.73,
+        "text": "2 hrs 21 mins",
+        "total_seconds": 8500.821966
+      },
+      {
+        "digital": "1:24",
+        "hours": 1,
+        "minutes": 24,
+        "name": "Other",
+        "percent": 5.81,
+        "text": "1 hr 24 mins",
+        "total_seconds": 5081.992723
+      },
+      {
+        "digital": "1:03",
+        "hours": 1,
+        "minutes": 3,
+        "name": "CSS",
+        "percent": 4.37,
+        "text": "1 hr 3 mins",
+        "total_seconds": 3821.392349
+      },
+      {
+        "digital": "0:35",
+        "hours": 0,
+        "minutes": 35,
+        "name": "CSV",
+        "percent": 2.46,
+        "text": "35 mins",
+        "total_seconds": 2150.450483
+      },
+      {
+        "digital": "0:21",
+        "hours": 0,
+        "minutes": 21,
+        "name": "Text",
+        "percent": 1.46,
+        "text": "21 mins",
+        "total_seconds": 1278.699669
+      },
+      {
+        "digital": "0:03",
+        "hours": 0,
+        "minutes": 3,
+        "name": "YAML",
+        "percent": 0.23,
+        "text": "3 mins",
+        "total_seconds": 202.703786
+      },
+      {
+        "digital": "0:01",
+        "hours": 0,
+        "minutes": 1,
+        "name": "Markdown",
+        "percent": 0.13,
+        "text": "1 min",
+        "total_seconds": 115.696
+      },
+      {
+        "digital": "0:00",
+        "hours": 0,
+        "minutes": 0,
+        "name": "Bash/Shell/PowerShell",
+        "percent": 0.05,
+        "text": "0 secs",
+        "total_seconds": 42.613
+      },
+      {
+        "digital": "0:00",
+        "hours": 0,
+        "minutes": 0,
+        "name": "Docker",
+        "percent": 0.01,
+        "text": "0 secs",
+        "total_seconds": 6.702
+      },
+      {
+        "digital": "0:00",
+        "hours": 0,
+        "minutes": 0,
+        "name": "XML",
+        "percent": 0,
+        "text": "0 secs",
+        "total_seconds": 4.041
+      }
+    ],
+    "operating_systems": [
+      {
+        "digital": "24:16",
+        "hours": 24,
+        "minutes": 16,
+        "name": "MacOS",
+        "percent": 100,
+        "text": "24 hrs 16 mins",
+        "total_seconds": 87396.429109
+      }
+    ]
+  }
+}

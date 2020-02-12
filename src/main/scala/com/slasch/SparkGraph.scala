@@ -1,8 +1,9 @@
 package com.slasch
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.types._
 import org.graphframes.GraphFrame
+import org.apache.spark.sql.{functions => F, _}
 
 object SparkGraph extends App {
 
@@ -28,7 +29,6 @@ object SparkGraph extends App {
       .add("2017", IntegerType)
       .add("2018", IntegerType)
       .add("2019", IntegerType)
-      .add("distance", DoubleType)
 
     /*
     WRONG - edge overwrites node settings
@@ -57,15 +57,17 @@ object SparkGraph extends App {
 
   val graph = create_graph()
 
-//  graph.vertices
-//    .withColumn("total", F.array("2017", "2018", "2019"))
-//    .withColumn("total", F.expr("aggregate(total, 0L, (acc, value) -> acc + value)"))
-//    .orderBy(F.col("total").desc_nulls_last)
-//    .show(1)
+  graph.vertices
+    .withColumn("total", F.array("2017", "2018", "2019"))
+    .withColumn("total", F.expr("aggregate(total, 0L, (acc, value) -> acc + value)"))
+    .orderBy(F.col("total").desc_nulls_last)
+    .show(5)
 
-//  graph.edges
-//    .orderBy(F.col("distance").desc_nulls_last)
-//    .show(1)
+  graph.edges
+    .withColumn("total", F.array("2017", "2018", "2019"))
+    .withColumn("total", F.expr("aggregate(total, 0L, (acc, value) -> acc + value)"))
+    .orderBy(F.col("total").asc_nulls_last)
+    .show(5)
 
   // java.lang.NoSuchMethodError: scala.Predef$.refArrayOps([Ljava/lang/Object;)Lscala/collection/mutable/ArrayOps;
   // change scala from 2.12 to 2.11

@@ -12,7 +12,7 @@ object Neo4jConnection extends App {
        |WITH "$path" AS base
        |WITH base + "vertices.csv" AS path
        |LOAD CSV WITH HEADERS FROM path AS row
-       |MERGE (tech:Technology {label:row.id})
+       |MERGE (tech:Technology {label:row.name})
        |SET
        |  tech.year2017 = toInteger(row['2017']), tech.year2018 = toInteger(row['2018']), tech.year2019 = toInteger(row['2019']),
        |  tech.total = tech.year2017 + tech.year2018 + tech.year2019,
@@ -27,10 +27,14 @@ object Neo4jConnection extends App {
        |MATCH (l:Technology {label: row.src})
        |MATCH (r:Technology {label: row.dst})
        |MERGE (l)-[:CONNECTED {
-       | distance: toFloat(row.distance),
        | year2017: toInteger(row['2017']),
        | year2018: toInteger(row['2018']),
-       | year2019: toInteger(row['2019'])
+       | year2019: toInteger(row['2019']),
+       | closeness2017: toFloat(row['2017']) / (CASE WHEN l.year2017 = 0 OR r.year2017 = 0 THEN 0.001 ELSE CASE WHEN l.year2017<r.year2017 AND l.year2017 > 0 THEN l.year2017 ELSE r.year2017 END END),
+       | closeness2018: toFloat(row['2018']) / (CASE WHEN l.year2018 = 0 OR r.year2018 = 0 THEN 0.001 ELSE CASE WHEN l.year2018<r.year2018 AND l.year2018 > 0 THEN l.year2018 ELSE r.year2018 END END),
+       | closeness2019: toFloat(row['2019']) / (CASE WHEN l.year2019 = 0 OR r.year2019 = 0 THEN 0.001 ELSE CASE WHEN l.year2019<r.year2019 AND l.year2019 > 0 THEN l.year2019 ELSE r.year2019 END END),
+       | closeness: (toFloat(row['2017']) + toFloat(row['2018']) + toFloat(row['2019'])) /
+       |  (CASE WHEN l.total<r.total AND l.total > 0 THEN l.total ELSE r.total END)
        | }]->(r)
        |""".stripMargin
 
