@@ -1,0 +1,196 @@
+name,type,2017,2018,2019
+Amazon DynamoDB,database,0,3454,0
+Amazon RDS/Aurora,database,0,3388,0
+Amazon Redshift,database,0,1464,0
+Apache HBase,database,0,1107,0
+Apache Hive,database,0,1438,0
+Cassandra,database,906,2444,2597
+Couchbase,database,0,0,1517
+DynamoDB,database,0,0,4629
+Elasticsearch,database,0,9312,10720
+Firebase,database,0,0,9612
+Google BigQuery,database,0,1384,0
+Google Cloud Storage,database,0,3634,0
+IBM Db2,database,0,1677,0
+MariaDB,database,0,8853,12401
+Memcached,database,0,3615,0
+"Microsoft Azure (Tables, CosmosDB, SQL, etc)",database,0,5203,0
+Microsoft SQL Server,database,0,0,24590
+MongoDB,database,6192,17183,19100
+MySQL,database,16375,38909,40537
+Neo4j,database,0,1572,0
+Oracle,database,4874,7376,12353
+PostgreSQL,database,7815,21776,25758
+Redis,database,4143,11944,13971
+SQL Server,database,11358,27293,0
+SQLite,database,7838,13036,23713
+.NET,framework,0,0,21889
+.NET Core,framework,0,0,13875
+ASP.NET,framework,0,0,16699
+Angular/Angular.js,framework,0,0,19532
+Ansible,framework,0,0,5504
+Apache Spark,framework,0,0,3394
+BSD/Unix,framework,0,148,0
+Chef,framework,0,0,1476
+Cordova,framework,0,0,4147
+CryEngine,framework,0,0,344
+Django,framework,0,0,8249
+Drupal,framework,0,0,2195
+Express,framework,0,0,12522
+Flask,framework,0,0,7694
+Flutter,framework,0,0,2010
+Hadoop,framework,0,0,2856
+Laravel,framework,0,0,6679
+Linux-based,framework,0,17684,0
+MacOS,framework,0,20325,0
+Node.js,framework,0,0,29207
+Pandas,framework,0,0,7447
+Puppet,framework,0,0,1557
+React Native,framework,0,0,6133
+React.js,framework,0,0,19877
+Ruby on Rails,framework,0,0,5225
+Spring,framework,0,0,10298
+TensorFlow,framework,0,0,6009
+Torch/PyTorch,framework,0,0,1922
+Unity 3D,framework,0,0,6627
+Unreal Engine,framework,0,0,2055
+Vue.js,framework,0,0,9671
+Windows,framework,0,38022,0
+Xamarin,framework,0,0,3810
+jQuery,framework,0,0,30981
+.NET Core,ide,6763,14026,0
+Android Studio,ide,0,0,14787
+Angular/Angular.js,ide,0,19023,0
+AngularJS,ide,8962,0,0
+Atom,ide,0,0,11636
+Coda,ide,0,0,578
+Cordova,ide,2232,4369,0
+Django,ide,0,6723,0
+Eclipse,ide,0,0,12591
+Emacs,ide,0,0,3922
+Firebase,ide,1979,0,0
+Hadoop,ide,1148,2447,0
+IPython / Jupyter,ide,0,0,8317
+IntelliJ,ide,0,0,22166
+Komodo,ide,0,0,368
+Light Table,ide,0,0,178
+NetBeans,ide,0,0,5121
+Node.js,ide,9522,25598,0
+Notepad++,ide,0,0,26621
+PHPStorm,ide,0,0,6645
+PyCharm,ide,0,0,11724
+RStudio,ide,0,0,2940
+React,ide,3953,14337,0
+RubyMine,ide,0,0,1202
+Spark,ide,953,2475,0
+Spring,ide,0,9079,0
+Sublime Text,ide,0,0,20424
+TensorFlow,ide,0,4026,0
+TextMate,ide,0,0,805
+Torch/PyTorch,ide,0,868,0
+Vim,ide,0,0,22163
+Visual Studio,ide,0,0,27490
+Visual Studio Code,ide,0,0,44311
+Xamarin,ide,1675,3796,0
+Xcode,ide,0,0,8239
+Zend,ide,0,0,307
+Assembly,language,1823,5760,5833
+Bash/Shell/PowerShell,language,0,31172,31991
+C,language,6974,18042,18017
+C#,language,12476,26954,27097
+C++,language,8155,19872,20524
+CSS,language,0,50979,0
+Clojure,language,391,1032,1254
+Cobol,language,0,590,0
+CoffeeScript,language,1192,2603,0
+Common Lisp,language,273,0,0
+Dart,language,145,0,1683
+Delphi/Object Pascal,language,0,2025,0
+Elixir,language,380,0,1260
+Erlang,language,281,886,777
+F#,language,457,1115,973
+Go,language,1557,5532,7201
+Groovy,language,1193,3373,0
+HTML/CSS,language,0,53628,55466
+Hack,language,107,254,0
+Haskell,language,649,1961,0
+Java,language,14524,35521,35917
+JavaScript,language,22875,54686,59219
+Julia,language,138,430,0
+Kotlin,language,0,3508,5620
+Lua,language,1039,2733,0
+Matlab,language,1569,4564,0
+Objective-C,language,2349,5510,4191
+Ocaml,language,0,470,0
+PHP,language,10290,24071,23030
+Perl,language,1585,3280,0
+Python,language,11704,30359,36443
+R,language,1634,4813,5048
+Ruby,language,3324,7911,7331
+Rust,language,416,1857,2794
+SQL,language,18754,44670,47544
+Scala,language,1309,3420,3309
+Smalltalk,language,327,0,0
+Swift,language,2368,6310,5744
+TypeScript,language,3488,13626,18523
+VB.NET,language,2273,5254,0
+VBA,language,1574,3810,4781
+Visual Basic 6,language,1071,3087,0
+WebAssembly,language,0,0,1015
+Android Studio,os,5953,14558,0
+Atom,os,6540,13576,0
+BSD/Unix,os,0,0,124
+Coda,os,227,487,0
+Eclipse,os,7899,14213,0
+Emacs,os,1956,3081,0
+IPython / Jupyter,os,1914,5602,0
+IntelliJ,os,7418,18765,0
+Komodo,os,254,431,0
+Light Table,os,70,148,0
+Linux-based,os,0,0,22472
+MacOS,os,0,0,23541
+NetBeans,os,2909,6150,0
+Notepad++,os,12681,25755,0
+PHPStorm,os,2965,6753,0
+PyCharm,os,3268,9027,0
+RStudio,os,996,2503,0
+RubyMine,os,613,1202,0
+Sublime Text,os,9978,21810,0
+TextMate,os,439,808,0
+Vim,os,9679,19477,0
+Visual Studio,os,13677,25870,0
+Visual Studio Code,os,6826,26280,0
+Windows,os,0,0,41714
+Xcode,os,3850,7986,0
+Zend,os,156,299,0
+AWS,platform,0,15927,21304
+Amazon Echo,platform,0,1938,0
+Amazon Web Services (AWS),platform,8183,0,0
+Android,platform,8211,19157,21639
+Apple Watch or Apple TV,platform,0,1266,0
+Arduino,platform,2986,7006,8543
+Azure,platform,0,7267,0
+Docker,platform,0,0,25212
+Drupal,platform,0,2010,0
+ESP8266,platform,0,1466,0
+Firebase,platform,0,9575,0
+Gaming console,platform,0,850,0
+Google Cloud Platform/App Engine,platform,0,5302,9928
+Google Home,platform,0,892,0
+Heroku,platform,0,6913,8527
+IBM Cloud or Watson,platform,0,950,1514
+Kubernetes,platform,0,0,6835
+Linux,platform,9593,31859,42753
+MacOS,platform,5363,11822,17806
+Mainframe,platform,404,533,0
+Microsoft Azure,platform,3327,0,9528
+Predix,platform,0,110,0
+Raspberry Pi,platform,4676,10509,12183
+Salesforce,platform,762,1457,0
+Serverless,platform,606,2987,0
+SharePoint,platform,1083,1766,0
+Slack,platform,0,0,16723
+Windows,platform,11949,23393,40630
+Windows Phone,platform,1124,1800,0
+WordPress,platform,4537,10486,11595
+iOS,platform,4782,10201,10446
